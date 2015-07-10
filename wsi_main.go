@@ -15,13 +15,14 @@ import (
 	"time"
 )
 
+// Data structure for users. Full OAUTH integration would be preferred in prod.
 type User struct {
 	Uid int64 `db:"Uid"`
 	Pwd string
 }
 
-// Data structure for a full WSI post. Note that the image data is simply mocked
-// out as a string.
+// Data structure for a full WSI post. Note that the image data is simply
+// mocked out as a string.
 type Post struct {
 	Post_id int64 `db:"Pid"`
 	Text    string
