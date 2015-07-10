@@ -12,13 +12,21 @@
 ##Usage:##
 
 #####Create user:#####
-`curl --request POST 'http://localhost:8000/login' --data-urlencode User_id=saghevli --data-urlencode Pwd=hunter2`
+`URL: /login`
+
+`$ curl --request POST 'http://localhost:8000/login' --data-urlencode User_id=saghevli --data-urlencode Pwd=hunter2`
 
 #####Create a post:#####
-`curl --request POST 'http://localhost:8000/post'  --data-urlencode Text=hello --data-urlencode Author=1234  --data-urlencode Img=picture`
+`URL: /post Params: Text (string), Author (int), Img (string)`
+
+`$ curl --request POST 'http://localhost:8000/postimg'  --data-urlencode Text=hello --data-urlencode Author=1234  --data-urlencode Img=picture`
 
 #####Consume posts:#####
-`curl --request GET 'http://localhost:8000/posts/5'`
+`URL: /posts/num_posts/post_offset`
+
+`$ curl --request GET 'http://localhost:8000/posts/5/0'`
 
 #####Request permalink:#####
-`curl --request GET 'http://localhost:8000/perma/*id of an image you added*'`
+`URL: /perma/image_id` (returned from a post call)
+
+`$ curl --request GET 'http://localhost:8000/perma/image_id'`

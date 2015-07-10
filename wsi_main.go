@@ -1,4 +1,4 @@
-// Wanna See It? API, by Saam Aghevli
+// Wanna See It? API example, by Saam Aghevli
 
 package main
 
@@ -46,8 +46,8 @@ func main() {
 
 	router := gin.Default()
 	router.POST("/login", CreateUser)
-	router.POST("/post", CreatePost)
-	router.GET("/posts/:count", PostsList)
+	router.POST("/postimg", CreatePost)
+	router.GET("/posts/:count/:offset", PostsList)
 	router.GET("/perma/:id", GetPermalink)
 	router.Run(":8000")
 }
@@ -93,6 +93,8 @@ func CreateDbUser(input_user_id int64, input_pwd string) (error, User) {
 func CreatePost(gin_context *gin.Context) {
 	var input Post
 	gin_context.Bind(&input)
+	// Author is currently just a stub, could be used to verify identity, for
+	// example using an OAUTH token.
 	err, new_post :=
 		CreateDbPost(input.Author, input.Text, input.Img)
 	if err == nil {
@@ -112,7 +114,8 @@ func CreateDbPost(input_author int64, input_text,
 	input_img string) (error, Post) {
 	// Simplified, language supported method of creating UUID's. In production,
 	// a more robust solution for random post identifiers should be used. In this
-	// prototype, 2^63 (9 quintillion) possibilities will suffice.
+	// prototype, 2^63 (9 quintillion) possibilities will suffice. Unless it goes
+	// really, really viral.
 	db_post := Post{
 		Post_id: rand.Int63(),
 		Text:    input_text,
@@ -132,16 +135,19 @@ func CreateDbPost(input_author int64, input_text,
 // by text, etc.
 func PostsList(gin_context *gin.Context) {
 	count := gin_context.Params.ByName("count")
-	post_count, err := strconv.Atoi(count)
-	if err != nil {
-		log.Println("Error processing count. Defaulting to 5 posts.")
+	offset := gin_context.Params.ByName("offset")
+	post_count, err_count := strconv.Atoi(count)
+	post_offset, err_offset := strconv.Atoi(offset)
+	if err_count != nil || err_offset != nil {
+		log.Println("Error processing inputs. Defaulting to 5 posts, no offset.")
 		post_count = 5
+		post_offset = 0
 	}
 	var posts []Post
-	// Reusing error variable, so := is not needed.
-	_, err = dbmap.Select(
-		&posts, "select * from posts order by Date limit ?", post_count)
-	CheckAndLogError(err, "Select failed")
+	_, err_db := dbmap.Select(
+		&posts, "select * from posts order by Date limit ?, ?", post_offset,
+		post_count)
+	CheckAndLogError(err_db, "Select failed")
 	content := gin.H{}
 	for key, value := range posts {
 		content[strconv.Itoa(key)] = value
