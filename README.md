@@ -1,6 +1,13 @@
 
 #Sample exercise for "Wanna See It?"#
 
+Simple API for "Wanna See It?". Users are presented with a text description of a photo. If they choose, they can view it (once). This API currently supports:
+
+* User login
+* Post creation
+* Post consumption
+* Permalinks
+
 ##Notes##
 
 User login is currently mostly mocked. A full sytstem would require OAUTH or other fully fledged authentication scheme, without personally implemented crypto. Images are posted at /postimg, with the specified parameters passed as urlencoded values. Images are consumed at the /posts endpoint, which is passed a count and an offset. This would enable a simple, descending order by date API, which would allow a user to scroll through a chronological feed of posts. Supporting other consumption patters, such as viewing posts by user, or searches for data contained in a posts text field would require additional database indexes on those fields (to operate at scale).
